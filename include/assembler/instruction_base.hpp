@@ -9,12 +9,6 @@
 namespace assembler {
 class instruction_base {
 public:
-    template <typename S>
-    boost::asio::mutable_buffer advance_buf(boost::asio::mutable_buffer b) const {
-        return {reinterpret_cast<void*>(
-                    reinterpret_cast<std::ptrdiff_t>(b.data()) + sizeof(S)),
-                b.size() - sizeof(S)};
-    }
     using tokenizer = boost::tokenizer<boost::char_separator<char>>;
 
     instruction_base();

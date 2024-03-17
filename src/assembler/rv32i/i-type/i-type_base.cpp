@@ -9,23 +9,6 @@
 // C++ STL
 #include <memory>
 
-#define ADD_HANDLER(name) \
-    { #name, name }
-
-namespace {
-boost::asio::mutable_buffer addi(
-    boost::tokenizer<boost::char_separator<char>> tokens,
-    boost::asio::mutable_buffer rcv_buf) {
-    return rcv_buf;
-}
-
-std::unordered_map<std::string,
-                   std::function<boost::asio::mutable_buffer(
-                       boost::tokenizer<boost::char_separator<char>>,
-                       boost::asio::mutable_buffer)>>
-    instruction_handlers{ADD_HANDLER(addi)};
-}  // namespace
-
 namespace assembler::rv32i::i_type {
 boost::asio::mutable_buffer i_type_base::encode(
     tokenizer tokens, boost::asio::mutable_buffer rcv_buf) const {
@@ -36,6 +19,6 @@ boost::asio::mutable_buffer i_type_base::encode(
     asm_inst_struct->imm = std::stoi(*++token_it);
 
     encode_i_type(tokens, *asm_inst_struct);
-    return advance_buf<i_type_struct>(rcv_buf);
+    return rcv_buf += (sizeof(i_type_struct));
 }
 }  // namespace assembler::rv32i::i_type

@@ -1,7 +1,6 @@
 // assembler
 #include <assembler/assembler.hpp>
 #include <assembler/instructions_fabric.hpp>
-#include <string_view>
 
 // spdlog
 #include <spdlog/spdlog.h>
