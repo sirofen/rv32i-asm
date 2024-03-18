@@ -6,7 +6,7 @@
 namespace assembler::rv32i::i_type {
 struct jalr : public load_inst {
     void encode(tokenizer tokens,
-                       i_type_struct& asm_struct) const override {
+                       rv32i_asm_struct& asm_struct) const override {
         asm_struct.opcode = 0b1100111;
         asm_struct.funct3 = 0b000;
     }

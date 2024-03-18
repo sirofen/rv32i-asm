@@ -13,9 +13,9 @@ constexpr const std::string_view word_separators = " \t\n\r,()\"";
 namespace assembler {
 assembler::assembler()
     : m_instructions_fabric(instructions_fabric::instance()) {
-    SPDLOG_INFO("Supported instructions:");
+    SPDLOG_DEBUG("Supported instructions:");
     for (const auto& inst : m_instructions_fabric.instruction_names()) {
-        SPDLOG_INFO("{}", inst);
+        SPDLOG_DEBUG("{}", inst);
     }
 }
 

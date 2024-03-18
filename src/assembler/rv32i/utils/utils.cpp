@@ -26,6 +26,7 @@ std::uint32_t register_parse(std::string_view register_abi_name) {
         for (size_t i = 0; i < std::size(regs); ++i) {
             reg_map[regs[i]] = i;
         }
+        reg_map["fp"] = 8;
         return reg_map;
     }();
     auto it = regs_abi_asm_map.find(register_abi_name);

@@ -2,9 +2,11 @@
 #include <assembler/instructions_fabric.hpp>
 // rv32i
 #include <assembler/rv32i/ctx.hpp>
-#include <assembler/rv32i/i-type/load_inst.hpp>
-#include <assembler/rv32i/i-type/imm_ops.hpp>
 #include <assembler/rv32i/i-type/ctrl_tr.hpp>
+#include <assembler/rv32i/i-type/imm_ops.hpp>
+#include <assembler/rv32i/i-type/load_inst.hpp>
+#include <assembler/rv32i/r-type/ar_ops.hpp>
+#include <assembler/rv32i/j-type/ctrl_tr.hpp>
 
 // C++ STL
 #include <memory>
@@ -39,6 +41,18 @@ instructions_fabric::instructions_fabric()
 
     add_handler("jalr", std::make_shared<rv32i::i_type::jalr>());
 
+    add_handler("add", std::make_shared<rv32i::r_type::add>());
+    add_handler("sub", std::make_shared<rv32i::r_type::sub>());
+    add_handler("sll", std::make_shared<rv32i::r_type::sll>());
+    add_handler("slt", std::make_shared<rv32i::r_type::slt>());
+    add_handler("sltu", std::make_shared<rv32i::r_type::sltu>());
+    add_handler("xor", std::make_shared<rv32i::r_type::_xor>());
+    add_handler("srl", std::make_shared<rv32i::r_type::srl>());
+    add_handler("sra", std::make_shared<rv32i::r_type::sra>());
+    add_handler("or", std::make_shared<rv32i::r_type::_or>());
+    add_handler("and", std::make_shared<rv32i::r_type::_and>());
+
+    add_handler("jal", std::make_shared<rv32i::j_type::jal>());
 
     for (auto& [_, handler] : m_instruction_handlers) {
         handler->set_ctx(shared_ctx);
