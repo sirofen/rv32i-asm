@@ -16,5 +16,15 @@ public:
 
     virtual boost::asio::mutable_buffer encode(
         tokenizer tokens, boost::asio::mutable_buffer rcv_buf) const = 0;
+
+    void set_ctx(std::shared_ptr<void> ctx);
+
+    template <class T>
+    std::shared_ptr<T> ctx() {
+        return m_ctx;
+    }
+
+private:
+    std::shared_ptr<void> m_ctx;
 };
 }  // namespace assembler

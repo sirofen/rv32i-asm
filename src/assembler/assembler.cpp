@@ -7,7 +7,7 @@
 
 namespace {
 constexpr const std::string_view line_separators = "\n;";
-constexpr const std::string_view word_separators = " \t\n\r,";
+constexpr const std::string_view word_separators = " \t\n\r,()\"";
 }  // namespace
 
 namespace assembler {

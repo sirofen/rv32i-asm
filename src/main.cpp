@@ -1,5 +1,7 @@
 // assembler
 #include <assembler/assembler.hpp>
+
+// boost
 #include <boost/asio/buffer.hpp>
 
 // tmp
@@ -22,12 +24,12 @@ int main() {
 
     char buf[0xff] {};
 
-    std::string_view input = {"addi t6, ra, 3; addi t6, ra 3"};
+    std::string_view input = {"lh s0, 3(s0)"};
 
-    a.assemble(input, boost::asio::mutable_buffer(buf, sizeof(buf)));
+    a.assemble("lh s0, 3(s0)", boost::asio::mutable_buffer(buf, sizeof(buf)));
 
-    print_buffer_bits(buf, 8);
-    std::uint32_t t = 0x308f93;
+    print_buffer_bits(buf, 4);
+    std::uint32_t t = 0x341403;
     print_buffer_bits((char*)&t, 4);
     SPDLOG_INFO("{:x}", *(std::uint32_t*)(&buf));
 

@@ -1,9 +1,13 @@
 // assembler
 #include <assembler/instructions_fabric.hpp>
 // rv32i
-#include <assembler/rv32i/i-type/i-type_base.hpp>
+#include <assembler/rv32i/ctx.hpp>
+#include <assembler/rv32i/i-type/load_inst.hpp>
+#include <assembler/rv32i/i-type/imm_ops.hpp>
+#include <assembler/rv32i/i-type/ctrl_tr.hpp>
 
 // C++ STL
+#include <memory>
 #include <stdexcept>
 
 // fmt
@@ -18,8 +22,28 @@ instructions_fabric& instructions_fabric::instance() {
 instructions_fabric::instructions_fabric()
     : m_instruction_names()
     , m_instruction_handlers() {
-        add_handler("addi", std::make_shared<rv32i::i_type::addi>());
+    auto shared_ctx = std::make_shared<rv32i::rv32i_context>();
+
+    add_handler("lw", std::make_shared<rv32i::i_type::lw>());
+    add_handler("lh", std::make_shared<rv32i::i_type::lh>());
+    add_handler("lhu", std::make_shared<rv32i::i_type::lhu>());
+    add_handler("lb", std::make_shared<rv32i::i_type::lb>());
+    add_handler("lbu", std::make_shared<rv32i::i_type::lbu>());
+
+    add_handler("addi", std::make_shared<rv32i::i_type::addi>());
+    add_handler("slti", std::make_shared<rv32i::i_type::slti>());
+    add_handler("sltiu", std::make_shared<rv32i::i_type::sltiu>());
+    add_handler("xori", std::make_shared<rv32i::i_type::xori>());
+    add_handler("ori", std::make_shared<rv32i::i_type::ori>());
+    add_handler("andi", std::make_shared<rv32i::i_type::andi>());
+
+    add_handler("jalr", std::make_shared<rv32i::i_type::jalr>());
+
+
+    for (auto& [_, handler] : m_instruction_handlers) {
+        handler->set_ctx(shared_ctx);
     }
+}
 
 const std::unordered_set<std::string_view>&
 instructions_fabric::instruction_names() const {
