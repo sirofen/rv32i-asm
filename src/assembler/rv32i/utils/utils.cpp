@@ -5,6 +5,9 @@
 #include <exception>
 #include <stdexcept>
 
+// boost
+#include <boost/lexical_cast.hpp>
+
 // fmt
 #include <fmt/format.h>
 
@@ -20,7 +23,7 @@ constexpr const std::string_view regs[] = {
 }  // namespace
 
 namespace assembler::rv32i::utils {
-std::uint32_t register_parse(std::string_view register_abi_name) {
+std::uint32_t register_parse(std::string_view register_name) {
     static auto regs_abi_asm_map = [&]() {
         std::unordered_map<std::string_view, uint32_t> reg_map;
         for (size_t i = 0; i < std::size(regs); ++i) {
@@ -29,10 +32,19 @@ std::uint32_t register_parse(std::string_view register_abi_name) {
         reg_map["fp"] = 8;
         return reg_map;
     }();
-    auto it = regs_abi_asm_map.find(register_abi_name);
+    if (register_name[0] == 'x') {
+        auto reg_n =
+            boost::lexical_cast<std::uint32_t>(register_name.substr(1));
+        if (reg_n > 31) {
+            register_not_found_exception(
+                fmt::format("Invalid register name: {}", register_name));
+        }
+        return reg_n;
+    }
+    auto it = regs_abi_asm_map.find(register_name);
     if (it == regs_abi_asm_map.end()) {
         throw register_not_found_exception(
-            fmt::format("Invalid register name: {}", register_abi_name));
+            fmt::format("Invalid register name: {}", register_name));
     }
     return it->second;
 }

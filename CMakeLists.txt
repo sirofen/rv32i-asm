@@ -4,11 +4,8 @@ project(rv32i-assembler CXX)
 
 option(BUILD_TESTS "Build tests" ON)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/sanitizers-cmake/cmake/" ${CMAKE_MODULE_PATH})
-
 find_package(Boost 1.71 REQUIRED system)
 find_package(fmt REQUIRED)
-find_package(Sanitizers REQUIRED)
 
 include(FetchContent)
 

@@ -1,12 +1,15 @@
 // assembler
 #include <assembler/instructions_fabric.hpp>
 // rv32i
+#include <assembler/rv32i/b-type/branch_inst.hpp>
 #include <assembler/rv32i/ctx.hpp>
 #include <assembler/rv32i/i-type/ctrl_tr.hpp>
 #include <assembler/rv32i/i-type/imm_ops.hpp>
 #include <assembler/rv32i/i-type/load_inst.hpp>
-#include <assembler/rv32i/r-type/ar_ops.hpp>
 #include <assembler/rv32i/j-type/ctrl_tr.hpp>
+#include <assembler/rv32i/r-type/ar_ops.hpp>
+#include <assembler/rv32i/s-type/store_inst.hpp>
+#include <assembler/rv32i/u-type/upper_imm_inst.hpp>
 
 // C++ STL
 #include <memory>
@@ -53,6 +56,20 @@ instructions_fabric::instructions_fabric()
     add_handler("and", std::make_shared<rv32i::r_type::_and>());
 
     add_handler("jal", std::make_shared<rv32i::j_type::jal>());
+
+    add_handler("beq", std::make_shared<rv32i::b_type::beq>());
+    add_handler("bne", std::make_shared<rv32i::b_type::bne>());
+    add_handler("blt", std::make_shared<rv32i::b_type::blt>());
+    add_handler("bge", std::make_shared<rv32i::b_type::bge>());
+    add_handler("bltu", std::make_shared<rv32i::b_type::bltu>());
+    add_handler("bgeu", std::make_shared<rv32i::b_type::bgeu>());
+
+    add_handler("sb", std::make_shared<rv32i::s_type::sb>());
+    add_handler("sh", std::make_shared<rv32i::s_type::sh>());
+    add_handler("sw", std::make_shared<rv32i::s_type::sw>());
+
+    add_handler("lui", std::make_shared<rv32i::u_type::lui>());
+    add_handler("auipc", std::make_shared<rv32i::u_type::auipc>());
 
     for (auto& [_, handler] : m_instruction_handlers) {
         handler->set_ctx(shared_ctx);
