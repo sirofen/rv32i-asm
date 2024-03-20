@@ -1,8 +1,6 @@
 // assembler
 #include <assembler/rv32i/load_inst.hpp>
-#include <assembler/rv32i/utils/utils.hpp>
-
-// boost
+#include <assembler/rv32i/rv32i_utils/utils.hpp>
 #include <assembler/utils/utils.hpp>
 
 namespace assembler::rv32i::i_type {

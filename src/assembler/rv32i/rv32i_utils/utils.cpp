@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/utils/utils.hpp>
+#include <assembler/rv32i/rv32i_utils/utils.hpp>
 
 // C++ STL
 #include <exception>

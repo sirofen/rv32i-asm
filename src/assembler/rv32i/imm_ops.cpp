@@ -1,9 +1,7 @@
 // assembler
 #include <assembler/rv32i/imm_ops.hpp>
-#include <assembler/rv32i/utils/utils.hpp>
+#include <assembler/rv32i/rv32i_utils/utils.hpp>
 #include <assembler/instruction_base.hpp>
-
-// boost
 #include <assembler/utils/utils.hpp>
 
 namespace assembler::rv32i::i_type {
