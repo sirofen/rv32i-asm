@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/b-type/branch_inst.hpp>
+#include <assembler/rv32i/branch_inst.hpp>
 #include <assembler/rv32i/utils/utils.hpp>
 #include <assembler/instruction_base.hpp>
 

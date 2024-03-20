@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/r-type/ar_ops.hpp>
+#include <assembler/rv32i/ar_ops.hpp>
 #include <assembler/rv32i/utils/utils.hpp>
 
 namespace assembler::rv32i::r_type {

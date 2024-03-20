@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/s-type/store_inst.hpp>
+#include <assembler/rv32i/store_inst.hpp>
 #include <assembler/rv32i/utils/utils.hpp>
 
 // boost

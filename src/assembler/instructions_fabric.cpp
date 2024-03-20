@@ -1,15 +1,15 @@
 // assembler
 #include <assembler/instructions_fabric.hpp>
 // rv32i
-#include <assembler/rv32i/b-type/branch_inst.hpp>
 #include <assembler/rv32i/ctx.hpp>
-#include <assembler/rv32i/i-type/ctrl_tr.hpp>
-#include <assembler/rv32i/i-type/imm_ops.hpp>
-#include <assembler/rv32i/i-type/load_inst.hpp>
-#include <assembler/rv32i/j-type/ctrl_tr.hpp>
-#include <assembler/rv32i/r-type/ar_ops.hpp>
-#include <assembler/rv32i/s-type/store_inst.hpp>
-#include <assembler/rv32i/u-type/upper_imm_inst.hpp>
+#include <assembler/rv32i/branch_inst.hpp>
+#include <assembler/rv32i/ctrl_tr.hpp>
+#include <assembler/rv32i/imm_ops.hpp>
+#include <assembler/rv32i/load_inst.hpp>
+#include <assembler/rv32i/ctrl_tr.hpp>
+#include <assembler/rv32i/ar_ops.hpp>
+#include <assembler/rv32i/store_inst.hpp>
+#include <assembler/rv32i/upper_imm_inst.hpp>
 
 // C++ STL
 #include <memory>

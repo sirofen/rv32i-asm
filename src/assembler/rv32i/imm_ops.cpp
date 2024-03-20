@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/i-type/imm_ops.hpp>
+#include <assembler/rv32i/imm_ops.hpp>
 #include <assembler/rv32i/utils/utils.hpp>
 #include <assembler/instruction_base.hpp>
 

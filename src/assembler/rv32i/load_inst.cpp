@@ -1,5 +1,5 @@
 // assembler
-#include <assembler/rv32i/i-type/load_inst.hpp>
+#include <assembler/rv32i/load_inst.hpp>
 #include <assembler/rv32i/utils/utils.hpp>
 
 // boost
