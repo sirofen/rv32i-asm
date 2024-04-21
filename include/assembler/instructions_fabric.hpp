@@ -10,10 +10,15 @@
 // assembler
 #include <assembler/instruction_base.hpp>
 
+// forward declaration
+namespace assembler {
+    struct cpu_ctx;
+}
+
 namespace assembler {
 class instructions_fabric {
 public:
-    static instructions_fabric& instance();
+    static instructions_fabric& instance(std::shared_ptr<cpu_ctx> cpu_ctx);
 
     const std::unordered_set<std::string_view>& instruction_names() const;
 
@@ -21,7 +26,7 @@ public:
         std::string_view instruction_name) const;
 
 private:
-    instructions_fabric();
+    instructions_fabric(std::shared_ptr<cpu_ctx>);
 
     instructions_fabric(const instructions_fabric&) = default;
     instructions_fabric& operator=(const instructions_fabric&) = default;

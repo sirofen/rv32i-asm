@@ -3,13 +3,14 @@
 
 // rv32i assembler
 #include <assembler/assembler.hpp>
+#include <assembler/rv32i/ctx.hpp>
 
 // boost
 #include <boost/asio/buffer.hpp>
 #include <boost/token_functions.hpp>
 
 namespace {
-static assembler::assembler rv32i_assembler;
+static assembler::assembler rv32i_assembler(std::make_shared<assembler::rv32i::rv32i_context>());
 }
 
 #define GEN_TEST_RV32I_ASM(TEST_NAME, ASM, MACHINE_CODE)                    \

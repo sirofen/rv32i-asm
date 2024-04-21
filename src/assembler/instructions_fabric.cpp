@@ -1,5 +1,6 @@
 // assembler
 #include <assembler/instructions_fabric.hpp>
+#include <assembler/cpu_ctx.hpp>
 // rv32i
 #include <assembler/rv32i/ctx.hpp>
 #include <assembler/rv32i/branch_inst.hpp>
@@ -19,15 +20,14 @@
 #include <fmt/format.h>
 
 namespace assembler {
-instructions_fabric& instructions_fabric::instance() {
-    static instructions_fabric i;
+instructions_fabric& instructions_fabric::instance(std::shared_ptr<cpu_ctx> cpu_ctx) {
+    static instructions_fabric i(std::move(cpu_ctx));
     return i;
 }
 
-instructions_fabric::instructions_fabric()
+instructions_fabric::instructions_fabric(std::shared_ptr<cpu_ctx> shared_ctx)
     : m_instruction_names()
     , m_instruction_handlers() {
-    auto shared_ctx = std::make_shared<rv32i::rv32i_context>();
 
     add_handler("lw", std::make_shared<rv32i::i_type::lw>());
     add_handler("lh", std::make_shared<rv32i::i_type::lh>());

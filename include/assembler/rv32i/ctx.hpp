@@ -1,15 +1,17 @@
 #pragma once
+// assembler
+#include <assembler/cpu_ctx.hpp>
 
 // C++ STL
-#include <boost/asio/buffer.hpp>
 #include <cstdint>
 #include <stdexcept>
 
 // boost
 #include <boost/asio.hpp>
+#include <boost/asio/buffer.hpp>
 
 namespace assembler::rv32i {
-struct rv32i_context {
+struct rv32i_context : public cpu_ctx {
     template <class T>
     static T* from_buf(boost::asio::mutable_buffer buf) {
         if (buf.size() < sizeof(i_type_rv32i_asm_struct_le)) {

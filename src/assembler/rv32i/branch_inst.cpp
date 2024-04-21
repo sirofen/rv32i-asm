@@ -1,8 +1,9 @@
 // assembler
+#include <assembler/instruction_base.hpp>
 #include <assembler/rv32i/branch_inst.hpp>
 #include <assembler/rv32i/rv32i_utils/utils.hpp>
-#include <assembler/instruction_base.hpp>
 #include <assembler/utils/utils.hpp>
+#include <stdexcept>
 
 namespace assembler::rv32i::b_type {
 boost::asio::mutable_buffer branch_inst::encode(
@@ -12,7 +13,21 @@ boost::asio::mutable_buffer branch_inst::encode(
     asm_inst_struct->rs1 = utils::register_parse(*++token_it);
     asm_inst_struct->rs2 = utils::register_parse(*++token_it);
 
-    auto imm = ::assembler::utils::parse_str<std::int16_t>(*++token_it);
+    auto imm_val_input = *++token_it;
+    std::int16_t imm;
+    auto imm_opt =
+        ::assembler::utils::parse_str_no_throw<std::int16_t>(imm_val_input);
+    if (imm_opt) {
+        imm = *imm_opt;
+    } else {
+        auto it = ctx()->label.find(std::string(imm_val_input));
+        if (it == ctx()->label.cend()) {
+            throw std::runtime_error(
+                fmt::format("Label '{}' no found", imm_val_input));
+        }
+        imm = it->second - ctx()->pc;
+    }
+
     asm_inst_struct->imm11 = (imm >> 11) & 0b1;
     asm_inst_struct->imm1_4 = (imm >> 1) & 0xF;
     asm_inst_struct->imm5_10 = (imm >> 5) & 0x3F;

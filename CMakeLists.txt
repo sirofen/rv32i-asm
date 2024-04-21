@@ -4,7 +4,7 @@ project(rv32i-assembler CXX)
 
 option(BUILD_TESTS "Build tests" ON)
 
-find_package(Boost 1.71 REQUIRED system)
+find_package(Boost 1.71 REQUIRED system program_options filesystem)
 
 include(cmake/ExternalLibraries.cmake)
 
