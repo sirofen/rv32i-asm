@@ -22,7 +22,7 @@ boost::asio::mutable_buffer ctrl_tr::encode(
             throw std::runtime_error(
                 fmt::format("Label '{}' no found", imm_val_input));
         }
-        imm = it->second;
+        imm = it->second - ctx()->pc;
     }
 
     asm_inst_struct->imm12_19 = imm >> 12;

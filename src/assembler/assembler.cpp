@@ -3,6 +3,10 @@
 #include <assembler/cpu_ctx.hpp>
 #include <assembler/instructions_fabric.hpp>
 
+// boost
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
+
 // spdlog
 #include <spdlog/spdlog.h>
 
@@ -27,13 +31,11 @@ assembler::assembler(std::shared_ptr<cpu_ctx> cpu_ctx)
 
 boost::asio::mutable_buffer assembler::assemble(
     std::string_view input, boost::asio::mutable_buffer buf) {
-
     parse_labels(input);
 
     tokenizer line_tokens(input, line_sep);
     for (const auto& line : line_tokens) {
-        if (line.empty() || line.front() == kComment)
-            continue;
+        if (line.empty() || line.front() == kComment) continue;
 
         auto label_pos = line.find(kLabel);
         std::string instruction = line;
@@ -78,7 +80,8 @@ void assembler::parse_labels(std::string_view input) {
                     m_cpu_ctx->pc += 4;
                 }
             }
-        } else if (!line.empty() && line.front() != kComment) {
+        } else if (!line.empty() &&
+                   boost::trim_left_copy(line).front() != kComment) {
             m_cpu_ctx->pc += 4;
         }
     }
