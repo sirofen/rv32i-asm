@@ -1,4 +1,5 @@
-# RV32I Assembler [![C++ CI](https://github.com/sirofen/rv32i-asm/actions/workflows/ci.yml/badge.svg)](https://github.com/sirofen/rv32i-asm/actions/workflows/ci.yml)
+[![C++ CI](https://github.com/sirofen/rv32i-asm/actions/workflows/ci.yml/badge.svg)](https://github.com/sirofen/rv32i-asm/actions/workflows/ci.yml)
+# RV32I Assembler
 
 ## Overview
 
