@@ -35,16 +35,19 @@ boost::asio::mutable_buffer assembler::assemble(
 
     tokenizer line_tokens(input, line_sep);
     for (const auto& line : line_tokens) {
-        if (line.empty() || line.front() == kComment) continue;
+        if (line.empty()) continue;
 
-        auto label_pos = line.find(kLabel);
-        std::string instruction = line;
+        auto comment_pos = line.find(kComment);
+        std::string instruction = (comment_pos != std::string::npos) ? line.substr(0, comment_pos) : line;
 
+        if (instruction.empty() || boost::algorithm::trim_copy(instruction).empty()) {
+            continue;
+        }
+
+        auto label_pos = instruction.find(kLabel);
         if (label_pos != std::string::npos) {
-            if (label_pos + 1 < line.size()) {
-                instruction = line.substr(label_pos + 1);
-                if (!instruction.empty() && instruction.front() == kComment)
-                    continue;
+            if (label_pos + 1 < instruction.size()) {
+                instruction = instruction.substr(label_pos + 1);
             } else {
                 continue;
             }
@@ -52,36 +55,40 @@ boost::asio::mutable_buffer assembler::assemble(
 
         tokenizer tokens(instruction, word_sep);
         auto token_it = tokens.begin();
-        if (token_it != tokens.end() && (*token_it)[0] != kComment) {
+        if (token_it != tokens.end()) {
             const auto& a = m_instructions_fabric.get_handler_for(*token_it);
             buf = a.encode(tokens, buf);
             m_cpu_ctx->pc += 4;
         }
     }
+    for (const auto& lm : m_cpu_ctx->label) {
+        SPDLOG_INFO("{}: {}", lm.first, lm.second);
+    }
     return buf;
 }
+
 
 void assembler::parse_labels(std::string_view input) {
     tokenizer line_tokens(input, line_sep);
 
     for (const auto& line : line_tokens) {
-        if (line.empty() || line.front() == kComment) {
+        auto line_trim = boost::trim_left_copy(line);
+        if (line_trim.empty() || line_trim.front() == kComment) {
             continue;
         }
 
-        auto label_pos = line.find(kLabel);
+        auto label_pos = line_trim.find(kLabel);
         if (label_pos != std::string_view::npos) {
-            auto label = line.substr(0, label_pos);
+            auto label = line_trim.substr(0, label_pos);
             m_cpu_ctx->add_label(label);
 
-            if (label_pos + 1 < line.size()) {
-                auto instruction = line.substr(label_pos + 1);
+            if (label_pos + 1 < line_trim.size()) {
+                auto instruction = line_trim.substr(label_pos + 1);
                 if (!instruction.empty() && instruction.front() != kComment) {
                     m_cpu_ctx->pc += 4;
                 }
             }
-        } else if (!line.empty() &&
-                   boost::trim_left_copy(line).front() != kComment) {
+        } else {
             m_cpu_ctx->pc += 4;
         }
     }
