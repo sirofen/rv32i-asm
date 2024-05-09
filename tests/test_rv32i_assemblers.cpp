@@ -4,14 +4,16 @@
 // rv32i assembler
 #include <assembler/assembler.hpp>
 #include <assembler/rv32i/ctx.hpp>
+#include <assembler/utils/utils.hpp>
 
 // boost
 #include <boost/asio/buffer.hpp>
 #include <boost/token_functions.hpp>
 
 namespace {
-static assembler::assembler rv32i_assembler(std::make_shared<assembler::rv32i::rv32i_context>());
-}
+static assembler::assembler rv32i_assembler(
+    std::make_shared<assembler::rv32i::rv32i_context>());
+}  // namespace
 
 #define GEN_TEST_RV32I_ASM(TEST_NAME, ASM, MACHINE_CODE)                    \
     TEST(RV32IAssembler, TEST_NAME) {                                       \
@@ -61,3 +63,20 @@ GEN_TEST_RV32I_ASM(SW, "sw s6, 3(s6)", 0x16b21a3)
 
 GEN_TEST_RV32I_ASM(LUI, "lui t5, -20", 0xfffecf37)
 GEN_TEST_RV32I_ASM(AUIPC, "auipc t6, -0x1", 0xffffff97)
+
+TEST(RV32IAssembler, LABEL_TESTS) {
+    std::string input_asm = assembler::utils::read_file(ASM_FILE_TEST);
+    std::string preassembled_data = assembler::utils::read_file(BIN_FILE_TEST);
+
+    char buf[1024]{};
+    boost::asio::mutable_buffer mbuf(&buf, sizeof(buf));
+    boost::asio::mutable_buffer ret_buf;
+
+    ASSERT_NO_THROW(ret_buf = rv32i_assembler.assemble(input_asm, mbuf));
+    std::size_t bytes_used =
+        static_cast<char*>(ret_buf.data()) - static_cast<char*>(mbuf.data());
+
+    ASSERT_EQ(preassembled_data.size(), bytes_used);
+
+    ASSERT_EQ(std::string(buf, bytes_used), preassembled_data);
+}
