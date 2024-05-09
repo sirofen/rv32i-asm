@@ -17,6 +17,8 @@ constexpr char kLabel = ':';
 boost::char_separator<char> line_sep("\n;");
 boost::char_separator<char> label_sep(" \t\n\r");
 boost::char_separator<char> word_sep(" \t\n\r,()\"");
+
+constexpr std::size_t pc_step = 4;
 }  // namespace
 
 namespace assembler {
@@ -58,11 +60,11 @@ boost::asio::mutable_buffer assembler::assemble(
         if (token_it != tokens.end()) {
             const auto& a = m_instructions_fabric.get_handler_for(*token_it);
             buf = a.encode(tokens, buf);
-            m_cpu_ctx->pc += 4;
+            m_cpu_ctx->pc += pc_step;
         }
     }
     for (const auto& lm : m_cpu_ctx->label) {
-        SPDLOG_INFO("{}: {}", lm.first, lm.second);
+        SPDLOG_DEBUG("{}: {}", lm.first, lm.second);
     }
     return buf;
 }
@@ -85,11 +87,11 @@ void assembler::parse_labels(std::string_view input) {
             if (label_pos + 1 < line_trim.size()) {
                 auto instruction = line_trim.substr(label_pos + 1);
                 if (!instruction.empty() && instruction.front() != kComment) {
-                    m_cpu_ctx->pc += 4;
+                    m_cpu_ctx->pc += pc_step;
                 }
             }
         } else {
-            m_cpu_ctx->pc += 4;
+            m_cpu_ctx->pc += pc_step;
         }
     }
     m_cpu_ctx->pc = 0;
