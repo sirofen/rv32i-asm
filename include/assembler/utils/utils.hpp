@@ -1,9 +1,9 @@
 #pragma once
 
 // C++ STL
+#include <optional>
 #include <stdexcept>
 #include <string_view>
-#include <optional>
 
 // fmt
 #include <fmt/format.h>
@@ -11,6 +11,7 @@
 // boost
 #include <boost/convert.hpp>
 #include <boost/convert/strtol.hpp>
+#include <boost/filesystem.hpp>
 
 namespace assembler::utils {
 template <typename T>
@@ -67,5 +68,9 @@ T parse_str(std::string_view input) {
 
     return is_neg_hex ? -res.value() : res.value();
 }
+
+std::string read_file(const std::string& path);
+void write_file_hex(const std::string& path, const char* buf, std::size_t size);
+void write_file_bin(const std::string& path, const char* buf, std::size_t size);
 
 }  // namespace assembler::utils

@@ -1,19 +1,17 @@
 // assembler
 #include <assembler/assembler.hpp>
 #include <assembler/rv32i/ctx.hpp>
+#include <assembler/utils/utils.hpp>
 
 // spdlog
 #include <spdlog/spdlog.h>
 
 // boost
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/program_options.hpp>
 
 // C++ STL
 #include <iostream>
 #include <string>
-
 
 struct app_params {
     std::string input_path;
@@ -50,27 +48,18 @@ app_params parse_command_line(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
-    namespace fs = boost::filesystem;
-
     assembler::assembler a(std::make_shared<assembler::rv32i::rv32i_context>());
-
     auto config = parse_command_line(argc, argv);
-    fs::ifstream input_file(fs::path(config.input_path));
-    std::string content((std::istreambuf_iterator<char>(input_file)),
-                        std::istreambuf_iterator<char>());
-    input_file.close();
 
-    char buf[0xfc]{};
-    a.assemble(content, boost::asio::mutable_buffer(&buf, sizeof(buf)));
+    auto content = assembler::utils::read_file(config.input_path);
 
-    fs::ofstream output_file(fs::path(config.output_path));
+    char buf[1024]{};
+    boost::asio::mutable_buffer mbuf(&buf, sizeof(buf));
+    auto ret_buf = a.assemble(content, mbuf);
+    std::size_t bytes_used =
+        static_cast<char*>(ret_buf.data()) - static_cast<char*>(mbuf.data());
 
-    std::size_t intr_len = sizeof(buf) / sizeof(uint32_t);
-    for (std::size_t i = 0; i < intr_len; i++) {
-        uint32_t* p = reinterpret_cast<uint32_t*>(buf + i * sizeof(uint32_t));
-        output_file << std::hex << *p << std::endl;
-    }
-    output_file.close();
+    assembler::utils::write_file_hex(config.output_path, buf, bytes_used);
 
     SPDLOG_INFO("Done");
     return 0;
