@@ -1,0 +1,30 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y libboost-all-dev cmake g++
+
+    - name: Configure CMake
+      run: cmake -S . -B build
+
+    - name: Build
+      run: cmake --build build --config Release
+
+    - name: Test
+      run: |
+        if [ -d "build/tests" ]; then
+          cmake --build build --target rv32i-assembler-unittests --config Release
+          ./build/tests/rv32i-assembler-unittests
+        fi
