@@ -18,8 +18,6 @@ struct cpu_ctx;
 namespace assembler {
 class assembler {
 public:
-    //using tokenizer = tokenizer;
-
     assembler(std::shared_ptr<cpu_ctx> cpu_ctx);
 
     assembler(assembler&& other) = delete;

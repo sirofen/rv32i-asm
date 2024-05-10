@@ -10,9 +10,6 @@
 // spdlog
 #include <spdlog/spdlog.h>
 
-// C++ STL
-#include <regex>
-
 namespace {
 constexpr char kComment = '#';
 constexpr char kLabel = ':';

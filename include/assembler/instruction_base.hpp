@@ -17,8 +17,6 @@ struct cpu_ctx;
 namespace assembler {
 class instruction_base {
 public:
-    //using tokenizer = assembler::tokenizer;
-
     instruction_base();
     virtual ~instruction_base() = default;
 
