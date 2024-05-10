@@ -18,7 +18,7 @@ static assembler::assembler rv32i_assembler(
 #define GEN_TEST_RV32I_ASM(TEST_NAME, ASM, MACHINE_CODE)                    \
     TEST(RV32IAssembler, TEST_NAME) {                                       \
         std::uint32_t _b{};                                                 \
-        ASSERT_NO_THROW(rv32i_assembler.assemble(#ASM, {&_b, sizeof(_b)})); \
+        ASSERT_NO_THROW(rv32i_assembler.assemble(ASM, {&_b, sizeof(_b)})); \
         ASSERT_EQ(_b, MACHINE_CODE);                                        \
     }
 

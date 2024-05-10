@@ -8,10 +8,10 @@ boost::asio::mutable_buffer upper_imm_inst::encode(
     tokenizer tokens, boost::asio::mutable_buffer rcv_buf) const {
     auto* asm_inst_struct = rv32i_context::from_buf<rv32i_asm_struct>(rcv_buf);
     boost::asio::buffer_cast<rv32i_asm_struct*>(rcv_buf);
-    auto token_it = tokens.begin();
-    asm_inst_struct->rd = utils::register_parse(*++token_it);
 
-    auto imm = ::assembler::utils::parse_str<std::int32_t>(*++token_it);
+    asm_inst_struct->rd = utils::register_parse(*++tokens);
+
+    auto imm = ::assembler::utils::parse_str<std::int32_t>(*++tokens);
     asm_inst_struct->imm12_31 = imm | ((imm >> 11) & ( 1 << 20));
 
     encode(tokens, *asm_inst_struct);

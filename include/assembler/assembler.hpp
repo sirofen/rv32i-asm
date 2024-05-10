@@ -1,4 +1,6 @@
 #pragma once
+// assembler
+#include <assembler/tokenizer.hpp>
 
 // boost
 #include <boost/asio/buffer.hpp>
@@ -16,7 +18,7 @@ struct cpu_ctx;
 namespace assembler {
 class assembler {
 public:
-    using tokenizer = boost::tokenizer<boost::char_separator<char>>;
+    //using tokenizer = tokenizer;
 
     assembler(std::shared_ptr<cpu_ctx> cpu_ctx);
 

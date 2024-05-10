@@ -6,6 +6,9 @@
 #include <boost/token_functions.hpp>
 #include <boost/tokenizer.hpp>
 
+// assembler
+#include <assembler/assembler.hpp>
+
 // forward declaration
 namespace assembler {
 struct cpu_ctx;
@@ -14,7 +17,7 @@ struct cpu_ctx;
 namespace assembler {
 class instruction_base {
 public:
-    using tokenizer = boost::tokenizer<boost::char_separator<char>>;
+    //using tokenizer = assembler::tokenizer;
 
     instruction_base();
     virtual ~instruction_base() = default;

@@ -12,7 +12,7 @@ namespace assembler::utils {
 std::string read_file(const std::string& path) {
     namespace fs = boost::filesystem;
 
-    SPDLOG_INFO("Reading file: {}", path);
+    SPDLOG_DEBUG("Reading file: {}", path);
 
     fs::path file_path(path);
     if (!fs::exists(file_path) || !fs::is_regular_file(file_path)) {
@@ -35,7 +35,7 @@ void write_file_hex(const std::string& path, const char* buf,
                     std::size_t size) {
     namespace fs = boost::filesystem;
 
-    SPDLOG_INFO("Writing file: {}", path);
+    SPDLOG_DEBUG("Writing file: {}", path);
 
     fs::path file_path(path);
     fs::ofstream output_file(file_path, std::ios::out | std::ios::trunc);
@@ -57,7 +57,7 @@ void write_file_bin(const std::string& path, const char* buf,
                     std::size_t size) {
     namespace fs = boost::filesystem;
 
-    SPDLOG_INFO("Writing file: {}", path);
+    SPDLOG_DEBUG("Writing file: {}", path);
 
     fs::path file_path(path);
     fs::ofstream output_file(
@@ -75,4 +75,5 @@ void write_file_bin(const std::string& path, const char* buf,
 
     output_file.close();
 }
+
 }  // namespace assembler::utils

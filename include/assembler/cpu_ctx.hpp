@@ -6,6 +6,11 @@
 #include <string_view>
 #include <unordered_map>
 
+// forward declaration
+namespace assembler {
+class instructions_fabric;
+}
+
 namespace assembler {
 struct cpu_ctx {
     void add_label(std::string_view label_name);
@@ -13,5 +18,7 @@ struct cpu_ctx {
 
     std::uint64_t pc = 0;
     std::unordered_map<std::string, std::uint64_t> label;
+
+    const instructions_fabric* m_instructions_fabric;
 };
 }  // namespace assembler

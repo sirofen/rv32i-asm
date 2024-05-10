@@ -1,16 +1,18 @@
 // assembler
-#include <assembler/instructions_fabric.hpp>
 #include <assembler/cpu_ctx.hpp>
+#include <assembler/instructions_fabric.hpp>
 // rv32i
-#include <assembler/rv32i/ctx.hpp>
+#include <assembler/rv32i/ar_ops.hpp>
 #include <assembler/rv32i/branch_inst.hpp>
 #include <assembler/rv32i/ctrl_tr.hpp>
+#include <assembler/rv32i/ctx.hpp>
 #include <assembler/rv32i/imm_ops.hpp>
 #include <assembler/rv32i/load_inst.hpp>
-#include <assembler/rv32i/ctrl_tr.hpp>
-#include <assembler/rv32i/ar_ops.hpp>
 #include <assembler/rv32i/store_inst.hpp>
 #include <assembler/rv32i/upper_imm_inst.hpp>
+
+// data init
+#include <assembler/rv32i/rv32i_utils/utils.hpp>
 
 // C++ STL
 #include <memory>
@@ -20,7 +22,8 @@
 #include <fmt/format.h>
 
 namespace assembler {
-instructions_fabric& instructions_fabric::instance(std::shared_ptr<cpu_ctx> cpu_ctx) {
+instructions_fabric& instructions_fabric::instance(
+    std::shared_ptr<cpu_ctx> cpu_ctx) {
     static instructions_fabric i(std::move(cpu_ctx));
     return i;
 }
@@ -28,7 +31,6 @@ instructions_fabric& instructions_fabric::instance(std::shared_ptr<cpu_ctx> cpu_
 instructions_fabric::instructions_fabric(std::shared_ptr<cpu_ctx> shared_ctx)
     : m_instruction_names()
     , m_instruction_handlers() {
-
     add_handler("lw", std::make_shared<rv32i::i_type::lw>());
     add_handler("lh", std::make_shared<rv32i::i_type::lh>());
     add_handler("lhu", std::make_shared<rv32i::i_type::lhu>());
@@ -71,6 +73,9 @@ instructions_fabric::instructions_fabric(std::shared_ptr<cpu_ctx> shared_ctx)
     add_handler("lui", std::make_shared<rv32i::u_type::lui>());
     add_handler("auipc", std::make_shared<rv32i::u_type::auipc>());
 
+    // data init
+    add_handler(".string", std::make_shared<rv32i::utils::string_data>());
+
     for (auto& [_, handler] : m_instruction_handlers) {
         handler->set_ctx(shared_ctx);
     }
@@ -81,7 +86,7 @@ instructions_fabric::instruction_names() const {
     return m_instruction_names;
 }
 
-const assembler::instruction_base& instructions_fabric::get_handler_for(
+const instruction_base& instructions_fabric::get_handler_for(
     std::string_view instruction_name) const {
     auto iter = m_instruction_handlers.find(instruction_name);
     if (iter == m_instruction_handlers.end()) {

@@ -10,13 +10,14 @@
 // spdlog
 #include <spdlog/spdlog.h>
 
+// C++ STL
+#include <regex>
+
 namespace {
 constexpr char kComment = '#';
 constexpr char kLabel = ':';
 
 boost::char_separator<char> line_sep("\n;");
-boost::char_separator<char> label_sep(" \t\n\r");
-boost::char_separator<char> word_sep(" \t\n\r,()\"");
 
 constexpr std::size_t pc_step = 4;
 }  // namespace
@@ -25,6 +26,7 @@ namespace assembler {
 assembler::assembler(std::shared_ptr<cpu_ctx> cpu_ctx)
     : m_cpu_ctx(cpu_ctx)
     , m_instructions_fabric(instructions_fabric::instance(m_cpu_ctx)) {
+    m_cpu_ctx->m_instructions_fabric = &m_instructions_fabric;
     SPDLOG_DEBUG("Supported instructions:");
     for (const auto& inst : m_instructions_fabric.instruction_names()) {
         SPDLOG_DEBUG("{}", inst);
@@ -35,14 +37,17 @@ boost::asio::mutable_buffer assembler::assemble(
     std::string_view input, boost::asio::mutable_buffer buf) {
     parse_labels(input);
 
-    tokenizer line_tokens(input, line_sep);
+    boost::tokenizer<boost::char_separator<char>> line_tokens(input, line_sep);
     for (const auto& line : line_tokens) {
         if (line.empty()) continue;
 
         auto comment_pos = line.find(kComment);
-        std::string instruction = (comment_pos != std::string::npos) ? line.substr(0, comment_pos) : line;
+        std::string instruction = (comment_pos != std::string::npos)
+                                      ? line.substr(0, comment_pos)
+                                      : line;
 
-        if (instruction.empty() || boost::algorithm::trim_copy(instruction).empty()) {
+        if (instruction.empty() ||
+            boost::algorithm::trim_copy(instruction).empty()) {
             continue;
         }
 
@@ -55,13 +60,11 @@ boost::asio::mutable_buffer assembler::assemble(
             }
         }
 
-        tokenizer tokens(instruction, word_sep);
-        auto token_it = tokens.begin();
-        if (token_it != tokens.end()) {
-            const auto& a = m_instructions_fabric.get_handler_for(*token_it);
-            buf = a.encode(tokens, buf);
-            m_cpu_ctx->pc += pc_step;
-        }
+        tokenizer tokens(instruction);
+        const auto& a =
+            m_instructions_fabric.get_handler_for(tokens.type_info());
+        buf = a.encode(tokens, buf);
+        m_cpu_ctx->pc += pc_step;
     }
     for (const auto& lm : m_cpu_ctx->label) {
         SPDLOG_DEBUG("{}: {}", lm.first, lm.second);
@@ -69,9 +72,8 @@ boost::asio::mutable_buffer assembler::assemble(
     return buf;
 }
 
-
 void assembler::parse_labels(std::string_view input) {
-    tokenizer line_tokens(input, line_sep);
+    boost::tokenizer<boost::char_separator<char>> line_tokens(input, line_sep);
 
     for (const auto& line : line_tokens) {
         auto line_trim = boost::trim_left_copy(line);
