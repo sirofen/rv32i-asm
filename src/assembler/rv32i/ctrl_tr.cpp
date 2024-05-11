@@ -12,14 +12,15 @@ boost::asio::mutable_buffer ctrl_tr::encode(
 
     auto imm_val_input = *++tokens;
     std::int32_t imm;
-    auto imm_opt = ::assembler::utils::parse_str_no_throw<std::int32_t>(imm_val_input);
+    auto imm_opt =
+        ::assembler::utils::parse_str_no_throw<std::int32_t>(imm_val_input);
     if (imm_opt) {
         imm = *imm_opt;
     } else {
         auto it = ctx()->label.find(std::string(imm_val_input));
         if (it == ctx()->label.cend()) {
-            throw std::runtime_error(
-                fmt::format("Label '{}' no found", imm_val_input));
+            throw assembler::label_not_found(
+                fmt::format("Label '{}' not found", imm_val_input), 4);
         }
         imm = it->second - ctx()->pc;
     }

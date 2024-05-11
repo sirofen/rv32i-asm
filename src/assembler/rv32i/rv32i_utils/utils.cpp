@@ -3,6 +3,7 @@
 #include <assembler/rv32i/store_inst.hpp>
 
 // assembler
+#include <assembler/assembler.hpp>
 #include <assembler/instructions_fabric.hpp>
 #include <assembler/utils/utils.hpp>
 
@@ -17,9 +18,6 @@
 #include <fmt/format.h>
 
 namespace {
-struct register_not_found_exception : public std::runtime_error {
-    using std::runtime_error::runtime_error;
-};
 
 constexpr const std::string_view regs[] = {
     "zero", "ra", "sp", "gp", "tp",  "t0",  "t1", "t2", "s0", "s1", "a0",
@@ -47,12 +45,12 @@ boost::asio::mutable_buffer gen_store_data(
                                   "addi t2, zero, {:d}", store_buf[i])),
                               rcv_buf);
         rcv_buf = store_byte.encode(
-            assembler::tokenizer(fmt::format("sb t1, {}(s4)", i)), rcv_buf);
+            assembler::tokenizer(fmt::format("sb t2, {}(t1)", i)), rcv_buf);
     }
 
     // write null terminator
     rcv_buf = store_byte.encode(
-        assembler::tokenizer(fmt::format("sb zero, {}(s4)", store_size)),
+        assembler::tokenizer(fmt::format("sb zero, {}(t1)", store_size)),
         rcv_buf);
 
     // clean t1, and t2
@@ -78,14 +76,14 @@ std::uint32_t register_parse(std::string_view register_name) {
         auto reg_n =
             boost::lexical_cast<std::uint32_t>(register_name.substr(1));
         if (reg_n > 31) {
-            register_not_found_exception(
+            throw assembler::register_not_found_exception(
                 fmt::format("Invalid register name: {}", register_name));
         }
         return reg_n;
     }
     auto it = regs_abi_asm_map.find(register_name);
     if (it == regs_abi_asm_map.end()) {
-        throw register_not_found_exception(
+        throw assembler::register_not_found_exception(
             fmt::format("Invalid register name: {}", register_name));
     }
     return it->second;

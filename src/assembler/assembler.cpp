@@ -6,6 +6,7 @@
 // boost
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/asio/buffer.hpp>
 
 // spdlog
 #include <spdlog/spdlog.h>
@@ -17,9 +18,40 @@ constexpr char kLabel = ':';
 boost::char_separator<char> line_sep("\n;");
 
 constexpr std::size_t pc_step = 4;
+
+std::size_t encode_instruction(
+    boost::asio::mutable_buffer& buf,
+    const assembler::instructions_fabric& m_instructions_fabric,
+    const std::string& instruction) {
+    assembler::tokenizer tokens(instruction);
+    auto ret_buf = m_instructions_fabric.get_handler_for(tokens.type_info())
+                       .encode(std::move(tokens), buf);
+    auto len =
+        static_cast<char*>(ret_buf.data()) - static_cast<char*>(buf.data());
+    buf = ret_buf;
+    return len;
+}
+std::size_t get_len(const assembler::instructions_fabric& m_instructions_fabric,
+                    const std::string& instruction) {
+    char buf[256];
+    boost::asio::mutable_buffer mbuf(buf, sizeof(buf));
+    std::size_t len = 0;
+    try {
+        len = encode_instruction(mbuf, m_instructions_fabric, instruction);
+    } catch (const assembler::assembler::label_not_found& e) {
+        len = e.instr_len;
+    }
+    return len;
+}
+
 }  // namespace
 
 namespace assembler {
+assembler::label_not_found::label_not_found(const std::string& msg,
+                                            std::size_t len)
+    : std::runtime_error(msg)
+    , instr_len(len) {}
+
 assembler::assembler(std::shared_ptr<cpu_ctx> cpu_ctx)
     : m_cpu_ctx(cpu_ctx)
     , m_instructions_fabric(instructions_fabric::instance(m_cpu_ctx)) {
@@ -57,11 +89,8 @@ boost::asio::mutable_buffer assembler::assemble(
             }
         }
 
-        tokenizer tokens(instruction);
-        const auto& a =
-            m_instructions_fabric.get_handler_for(tokens.type_info());
-        buf = a.encode(tokens, buf);
-        m_cpu_ctx->pc += pc_step;
+        m_cpu_ctx->pc +=
+            encode_instruction(buf, m_instructions_fabric, instruction);
     }
     for (const auto& lm : m_cpu_ctx->label) {
         SPDLOG_DEBUG("{}: {}", lm.first, lm.second);
@@ -86,11 +115,12 @@ void assembler::parse_labels(std::string_view input) {
             if (label_pos + 1 < line_trim.size()) {
                 auto instruction = line_trim.substr(label_pos + 1);
                 if (!instruction.empty() && instruction.front() != kComment) {
-                    m_cpu_ctx->pc += pc_step;
+                    m_cpu_ctx->pc +=
+                        get_len(m_instructions_fabric, instruction);
                 }
             }
         } else {
-            m_cpu_ctx->pc += pc_step;
+            m_cpu_ctx->pc += get_len(m_instructions_fabric, line_trim);
         }
     }
     m_cpu_ctx->pc = 0;

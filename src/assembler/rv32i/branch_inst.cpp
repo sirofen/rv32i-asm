@@ -22,8 +22,8 @@ boost::asio::mutable_buffer branch_inst::encode(
     } else {
         auto it = ctx()->label.find(std::string(imm_val_input));
         if (it == ctx()->label.cend()) {
-            throw std::runtime_error(
-                fmt::format("Label '{}' no found", imm_val_input));
+            throw assembler::label_not_found(
+                fmt::format("Label '{}' not found", imm_val_input), 4);
         }
         imm = it->second - ctx()->pc;
     }
