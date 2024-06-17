@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 
     auto content = assembler::utils::read_file(config.input_path);
 
-    char buf[1024]{};
+    char buf[8196]{};
     boost::asio::mutable_buffer mbuf(&buf, sizeof(buf));
     auto ret_buf = a.assemble(content, mbuf);
     std::size_t bytes_used =

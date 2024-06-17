@@ -10,12 +10,17 @@
 #include <boost/asio.hpp>
 #include <boost/asio/buffer.hpp>
 
+// fmt
+#include <fmt/format.h>
+
 namespace assembler::rv32i {
 struct rv32i_context : public cpu_ctx {
     template <class T>
     static T* from_buf(boost::asio::mutable_buffer buf) {
         if (buf.size() < sizeof(i_type_rv32i_asm_struct_le)) {
-            throw std::runtime_error("Not enough buffer space");
+            throw std::runtime_error(fmt::format(
+                "Not enough buffer space: {} for instruction of len: {}",
+                buf.size(), sizeof(i_type_rv32i_asm_struct_le)));
         }
         return boost::asio::buffer_cast<T*>(buf);
     }

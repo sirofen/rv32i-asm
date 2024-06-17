@@ -44,6 +44,10 @@ instructions_fabric::instructions_fabric(std::shared_ptr<cpu_ctx> shared_ctx)
     add_handler("ori", std::make_shared<rv32i::i_type::ori>());
     add_handler("andi", std::make_shared<rv32i::i_type::andi>());
 
+    add_handler("slli", std::make_shared<rv32i::i_type::slli>());
+    add_handler("srli", std::make_shared<rv32i::i_type::srli>());
+    add_handler("srai", std::make_shared<rv32i::i_type::srai>());
+
     add_handler("jalr", std::make_shared<rv32i::i_type::jalr>());
 
     add_handler("add", std::make_shared<rv32i::r_type::add>());

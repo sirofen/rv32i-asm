@@ -59,4 +59,26 @@ struct andi : public imm_ops {
     }
 };
 
+struct slli : public imm_ops {
+    void encode(tokenizer tokens, rv32i_asm_struct& asm_struct) const override {
+        asm_struct.opcode = 0b0010011;
+        asm_struct.funct3 = 0b001;
+    }
+};
+
+struct srli : public imm_ops {
+    void encode(tokenizer tokens, rv32i_asm_struct& asm_struct) const override {
+        asm_struct.opcode = 0b0010011;
+        asm_struct.funct3 = 0b101;
+    }
+};
+
+struct srai : public imm_ops {
+    void encode(tokenizer tokens, rv32i_asm_struct& asm_struct) const override {
+        asm_struct.opcode = 0b0010011;
+        asm_struct.funct3 = 0b101;
+        asm_struct.imm0_11 |= 1 << 10;
+    }
+};
+
 }  // namespace assembler::rv32i::i_type

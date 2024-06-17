@@ -29,8 +29,11 @@ boost::asio::mutable_buffer gen_store_data(
     const char* store_buf, std::uint32_t store_size,
     std::shared_ptr<assembler::cpu_ctx> ctx) {
     // amount of instructions store_size * 2 + 4
-    if (rcv_buf.size() < store_size * 2 + 4) {
-        throw std::runtime_error("Not enough buffer space");
+    auto buf_sz = store_size * 2 + 4;
+    if (rcv_buf.size() < buf_sz) {
+        throw std::runtime_error(
+            fmt::format("Not enough buffer space, exists: {}, needed: {}",
+                        rcv_buf.size(), buf_sz));
     }
     const auto& addi = ctx->m_instructions_fabric->get_handler_for("addi");
     const auto& store_byte = ctx->m_instructions_fabric->get_handler_for("sb");
